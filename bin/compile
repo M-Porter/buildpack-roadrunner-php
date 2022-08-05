@@ -51,12 +51,14 @@ fi
 
 echo "Unpacking archive" | indent
 
-if ! tar -xvzf "./${RR_ARCHIVE_NAME}" -C "." ; then
+if ! tar -xvzf "./${RR_ARCHIVE_NAME}" -C "out" ; then
   echo "Error unpacking archive" | output
   exit 1
 fi
 
 rm "${RR_ARCHIVE_NAME}"
-mv ./rr "${BUILD_DIR}/rr"
+mv ./out/rr "${BUILD_DIR}/rr"
+cd "${BUILD_DIR}" || exit 1
+rm -r "${RR_VENDOR_DIR}"
 
 echo "Installation successful" | output
