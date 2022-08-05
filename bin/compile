@@ -51,8 +51,8 @@ fi
 
 echo "Unpacking archive" | indent
 
-if ! tar -xvzf "./${RR_ARCHIVE_NAME}" --strip-components=1 ; then
-  echo "Error unpacking archive" | output
+if ! tar -xzf "./${RR_ARCHIVE_NAME}" --strip-components=1 ; then
+  echo "Error unpacking archive" | indent
   exit 1
 fi
 
@@ -61,4 +61,4 @@ cp ./rr "${BUILD_DIR}/rr"
 cd "${BUILD_DIR}" || exit 1
 rm -r "${RR_VENDOR_DIR}"
 
-echo "Installation successful" | output
+echo "Installation successful" | indent
