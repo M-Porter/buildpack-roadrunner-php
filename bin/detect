@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# bin/detect BUILD_DIR
+
+# valid for all envs
+exit 0

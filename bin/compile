@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+
+header() {
+  echo "" || true
+  echo "-----> $*" || true
+}
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+export_env_dir() {
+  local env_dir=$1
+  local acceptlist_regex=${2:-'RR_VERSION'}
+  local denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+header "Installing roadrunner"
+
+BUILD_DIR="${1:-}"
+CACHE_DIR="${2:-}"
+ENV_DIR="${3:-}"
+
+export_env_dir "${ENV_DIR}"
+
+RR_VERSION_TO_USE=${RR_VERSION:-2.10.7}
+RR_VERSION_TO_USE="$(echo "${RR_VERSION_TO_USE}" | gsed -u 's/^v//')"
+RR_ARCHIVE_NAME="rr.tar.gz"
+RR_DOWNLOAD_URL="https://github.com/roadrunner-server/roadrunner/releases/download/v${RR_VERSION_TO_USE}/roadrunner-${RR_VERSION_TO_USE}-linux-amd64.tar.gz"
+
+cd "${BUILD_DIR}" || exit 1
+RR_VENDOR_DIR="vendor/buildpack-roadrunner-php"
+mkdir -p "${RR_VENDOR_DIR}"
+cd "${RR_VENDOR_DIR}" || exit 1
+
+echo "Downloading ${RR_DOWNLOAD_URL}" | indent
+
+STATUS_CODE=$(curl "${RR_DOWNLOAD_URL}" -L --silent --fail --retry 5 --retry-max-time 15 -o ./${RR_ARCHIVE_NAME} --write-out "%{http_code}")
+if [[ "${STATUS_CODE}" != "200" ]]; then
+  echo "Unable to download rr binary: ${STATUS_CODE}" | indent
+  exit 1
+fi
+
+echo "Unpacking archive" | indent
+
+if ! tar xJf "./${RR_ARCHIVE_NAME}" --strip-components=1; then
+  echo "Error unpacking archive" | output
+  exit 1
+fi
+
+rm "${RR_ARCHIVE_NAME}"
+mv ./rr "${BUILD_DIR}/rr"
+
+echo "Installation successful" | output
