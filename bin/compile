@@ -51,7 +51,7 @@ fi
 
 echo "Unpacking archive" | indent
 
-if ! tar xJf "./${RR_ARCHIVE_NAME}" --strip-components=1; then
+if ! tar -xvzf "./${RR_ARCHIVE_NAME}" -C "." ; then
   echo "Error unpacking archive" | output
   exit 1
 fi
