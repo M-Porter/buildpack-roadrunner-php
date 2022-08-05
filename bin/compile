@@ -32,7 +32,7 @@ ENV_DIR="${3:-}"
 export_env_dir "${ENV_DIR}"
 
 RR_VERSION_TO_USE=${RR_VERSION:-2.10.7}
-RR_VERSION_TO_USE="$(echo "${RR_VERSION_TO_USE}" | gsed -u 's/^v//')"
+RR_VERSION_TO_USE="$(echo "${RR_VERSION_TO_USE}" | sed -u 's/^v//')"
 RR_ARCHIVE_NAME="rr.tar.gz"
 RR_DOWNLOAD_URL="https://github.com/roadrunner-server/roadrunner/releases/download/v${RR_VERSION_TO_USE}/roadrunner-${RR_VERSION_TO_USE}-linux-amd64.tar.gz"
 
