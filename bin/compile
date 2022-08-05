@@ -51,13 +51,13 @@ fi
 
 echo "Unpacking archive" | indent
 
-if ! tar -xvzf "./${RR_ARCHIVE_NAME}" -C "out" ; then
+if ! tar -xvzf "./${RR_ARCHIVE_NAME}" --strip-components=1 ; then
   echo "Error unpacking archive" | output
   exit 1
 fi
 
 rm "${RR_ARCHIVE_NAME}"
-mv ./out/rr "${BUILD_DIR}/rr"
+cp ./rr "${BUILD_DIR}/rr"
 cd "${BUILD_DIR}" || exit 1
 rm -r "${RR_VENDOR_DIR}"
 
